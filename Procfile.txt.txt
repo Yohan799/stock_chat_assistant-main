@@ -1,1 +1,1 @@
-web: gunicorn stock_chat_assistant.wsgi:application
+web: gunicorn stockchat.wsgi:application
