@@ -8,4 +8,4 @@ services:
       - key: DJANGO_SETTINGS_MODULE
         value: stock_chat_assistant.settings
       - key: SECRET_KEY
-        value: your-django-secret-key
+        value: $djy&v)k^^owk%clqu!=80^s##s4of@+b0&sf(xlu080kjzzob
