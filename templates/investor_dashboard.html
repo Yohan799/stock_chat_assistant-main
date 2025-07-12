@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}Investor Dashboard{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h2 class="fw-bold mb-2"><i class="bi bi-person-circle me-2"></i>Welcome, <span class="text-primary">{{ user.username }}</span></h2>
+            <p class="lead">Your personalized investor dashboard</p>
+        </div>
+    </div>
+    {% if buy_message %}
+    <div class="row justify-content-center mb-3">
+        <div class="col-md-8">
+            <div class="alert alert-success shadow-sm">{{ buy_message }}</div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-cart-plus me-2"></i>Buy Stock
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">{{ buy_form.ticker.label_tag }} {{ buy_form.ticker }}</div>
+                        <div class="mb-3">{{ buy_form.quantity.label_tag }} {{ buy_form.quantity }}</div>
+                        <div class="mb-3">{{ buy_form.price.label_tag }} {{ buy_form.price }}</div>
+                        <button type="submit" name="buy_stock" class="btn btn-success w-100">Buy</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-info text-white">
+                    <i class="bi bi-bar-chart-line me-2"></i>Your Portfolio
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0 align-middle text-center">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Ticker</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Avg Buy Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stock in portfolio %}
+                            <tr>
+                                <td class="fw-bold">{{ stock.ticker }}</td>
+                                <td>{{ stock.quantity }}</td>
+                                <td>₹{{ stock.avg_buy_price }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="3" class="text-muted">No stocks in portfolio.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if recommendations %}
+    <div class="row mb-4">
+        <div class="col-md-8 mx-auto">
+            <div class="card border-primary shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <i class="bi bi-stars me-2"></i>Recommended by Analyst
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for rec in recommendations %}
+                        <li class="list-group-item">
+                            <span class="fw-bold text-success">{{ rec.ticker }}</span> &mdash; {{ rec.note }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            {% include 'chat_box.html' %}
+        </div>
+    </div>
+</div>
+<!-- Bootstrap Icons CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+{% endblock %}

@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+{% block title %}Analyst Dashboard{% endblock %}
+{% block content %}
+<style>
+    body { background: #f5f7fa; font-family: 'Segoe UI', Arial, sans-serif; }
+    .dashboard-header {
+        margin-top: 30px;
+        margin-bottom: 18px;
+        text-align: center;
+    }
+    .dashboard-header h2 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #23408e;
+    }
+    .dashboard-header p {
+        color: #23408e;
+        font-size: 1.15rem;
+        margin-top: 0.5rem;
+    }
+    .dashboard-main-row {
+        display: flex;
+        flex-wrap: wrap;
+        max-width: 1200px;
+        margin: 40px auto 0 auto;
+        gap: 32px;
+        align-items: flex-start;
+        justify-content: center;
+    }
+    .dashboard-investors {
+        flex: 2 1 400px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    .dashboard-card {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        min-width: 270px;
+        max-width: 350px;
+        flex: 1 1 270px;
+        display: flex;
+        flex-direction: column;
+        margin: auto;
+        margin-bottom: 18px;
+        border: 1.5px solid #e3e8f0;
+    }
+    .card-header {
+        background: #23408e;
+        color: #fff;
+        border-radius: 14px 14px 0 0;
+        padding: 12px 18px;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    .card-body {
+        padding: 18px 16px 16px 16px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .portfolio-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 12px;
+        font-size: 0.98rem;
+    }
+    .portfolio-table th, .portfolio-table td {
+        padding: 6px 8px;
+        text-align: center;
+        border-bottom: 1px solid #e5e5e5;
+    }
+    .portfolio-table th {
+        background: #e3e8f0;
+        color: #23408e;
+        font-weight: 600;
+    }
+    .portfolio-table td {
+        color: #222;
+    }
+    .recommend-label {
+        font-weight: 600;
+        color: #23408e;
+        margin-bottom: 6px;
+        display: block;
+    }
+    .recommend-form input[type="text"], .recommend-form textarea {
+        width: 100%;
+        padding: 7px 10px;
+        border: 1px solid #c8d0e7;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        font-size: 0.97rem;
+        background: #f7faff;
+        resize: vertical;
+        height: 100px;
+    }
+    .recommend-form button {
+        width: 100%;
+        background: #2bb673;
+        color: #fff;
+        font-weight: 600;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 0;
+        font-size: 1rem;
+        cursor: pointer;
+        margin-top: 4px;
+        transition: background 0.2s;
+    }
+    .recommend-form button:hover {
+        background: #219e5e;
+    }
+    .alert {
+        background: #d4f8e8;
+        color: #16754d;
+        border-radius: 6px;
+        padding: 7px 12px;
+        margin-bottom: 10px;
+        font-size: 0.97rem;
+        border: 1px solid #b3e6c7;
+    }
+    .history-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 0.95rem;
+    }
+    .history-list li {
+        padding: 5px 0;
+        border-bottom: 1px solid #e5e5e5;
+        color: #23408e;
+    }
+    .history-list li:last-child {
+        border-bottom: none;
+    }
+    .history-ticker {
+        font-weight: 600;
+        color: #2bb673;
+    }
+    .history-date {
+        color: #888;
+        float: right;
+        font-size: 0.93em;
+    }
+    .dashboard-chat-card {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        min-height: 520px;
+        flex: 2 1 400px;
+        margin-left: 24px;
+        display: flex;
+        flex-direction: column;
+        border: 1.5px solid #e3e8f0;
+        /* width: 100%; */
+        /* height: auto; */
+        height: 700px !important;
+        max-width: none;
+    }
+    .dashboard-chat-card .card-header {
+        background: #23272f;
+        color: #fff;
+        border-radius: 14px 14px 0 0;
+        font-size: 1.08rem;
+    }
+    @media (max-width: 991px) {
+        .dashboard-main-row {
+            flex-direction: column;
+            gap: 0;
+        }
+        .dashboard-chat-card {
+            margin: 32px auto 0 auto;
+            min-width: 90vw;
+            max-width: 98vw;
+        }
+        .dashboard-investors {
+            flex-direction: column;
+        }
+    }
+</style>
+<div class="dashboard-header">
+    <h2>Welcome, <span style="color:#2bb673;">{{ user.username }}</span></h2>
+    <p>Your Analyst Dashboard: Manage Investors & Recommendations</p>
+</div>
+{% if not investor_infos %}
+    <div class="alert" style="max-width:500px;margin:24px auto 0 auto;text-align:center;">No investors assigned to you yet.</div>
+{% endif %}
+<div class="dashboard-main-row">
+    <div class="dashboard-investors">
+        {% for info in investor_infos %}
+        <div class="dashboard-card">
+            <div class="card-header">Investor: <span style="color:#2bb673;">{{ info.investor.username }}</span></div>
+            <div class="card-body">
+                <div style="font-weight:600;color:#23408e;margin-bottom:8px;">Portfolio</div>
+                <table class="portfolio-table">
+                    <thead>
+                        <tr><th>Ticker</th><th>Qty</th><th>Avg Price</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for stock in info.portfolio %}
+                        <tr>
+                            <td style="font-weight:600;color:#2bb673;">{{ stock.ticker }}</td>
+                            <td>{{ stock.quantity }}</td>
+                            <td>₹{{ stock.avg_buy_price }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" style="color:#aaa;">No stocks.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="recommend-label">Recommend</div>
+                {% if info.rec_message %}
+                <div class="alert">{{ info.rec_message }}</div>
+                {% endif %}
+                <form method="post" class="recommend-form">
+                    {% csrf_token %}
+                    <label class="recommend-label">{{ info.rec_form.ticker.label_tag }} </label>{{ info.rec_form.ticker }}
+                    <label class="recommend-label">{{ info.rec_form.note.label_tag }}</label>{{ info.rec_form.note }}
+                    <button type="submit">Recommend</button>
+                </form>
+                <div class="recommend-label" style="margin-top:10px;">History</div>
+                <ul class="history-list">
+                    {% for rec in info.recommendations %}
+                    <li><span class="history-ticker">{{ rec.ticker }}</span> &mdash; {{ rec.note }}<span class="history-date">({{ rec.created_at|date:"Y-m-d H:i" }})</span></li>
+                    {% empty %}
+                    <li style="color:#aaa;">No recommendations yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="dashboard-chat-card">
+        <div class="card-header">Chat Assistant</div>
+        <div class="card-body" style="flex:1;display:flex;flex-direction:column;width:100%;height:auto;">
+            {% include 'chat_box.html' %}
+        </div>
+    </div>
+</div>
+{% endblock %}

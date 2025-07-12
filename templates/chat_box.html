@@ -1,0 +1,9 @@
+{% include 'chat_history.html' %}
+<form id="chat-form" method="post" hx-post="{% url 'chat_api' %}" hx-target="#chat-history" hx-swap="outerHTML" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="input-group">
+        <input type="text" class="form-control" name="message" placeholder="Ask about a stock (e.g. AAPL) or type your question..." required>
+        <button class="btn btn-primary" type="submit">Send</button>
+    </div>
+</form>
+<script src="https://unpkg.com/htmx.org@1.9.10"></script>

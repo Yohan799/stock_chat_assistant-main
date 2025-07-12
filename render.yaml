@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: stock-chat-assistant
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn stock_chat_assistant.wsgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: stock_chat_assistant.settings
+      - key: SECRET_KEY
+        value: your-django-secret-key
