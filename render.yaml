@@ -1,8 +1,11 @@
 services:
   - type: web
-    name: stock-chat-assistant
+    name: stock-chat
     env: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: |
+      pip install -r requirements.txt
+      python3 -c "import matplotlib; matplotlib.get_cachedir()"
+      python3 manage.py collectstatic --noinput
     startCommand: gunicorn stockchat.wsgi:application
     envVars:
       - key: DJANGO_SETTINGS_MODULE
